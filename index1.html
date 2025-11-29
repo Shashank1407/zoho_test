@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>JobFinder - Smart Job Search</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-soft: #080e23;
+      --accent: #6366f1;
+      --accent-soft: rgba(99, 102, 241, 0.12);
+      --accent-strong: #4f46e5;
+      --text: #e5e7eb;
+      --text-muted: #9ca3af;
+      --card: #0b1220;
+      --border: rgba(148, 163, 184, 0.2);
+      --danger: #ef4444;
+      --success: #22c55e;
+      --radius-xl: 1.5rem;
+      --radius-lg: 1rem;
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.7);
+      --shadow-subtle: 0 12px 30px rgba(15, 23, 42, 0.6);
+      --transition-fast: 180ms ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1e293b 0, #020617 45%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      border: none;
+      cursor: pointer;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.75rem 1.5rem 3rem;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      position: sticky;
+      top: 0;
+      padding: 0.6rem 1rem;
+      z-index: 10;
+      border-radius: 999px;
+      backdrop-filter: blur(20px);
+      background: radial-gradient(circle at top left, rgba(79,70,229,0.12), transparent 60%)
+        ,rgba(15,23,42,0.92);
+      border: 1px solid rgba(148,163,184,0.35);
+      box-shadow: 0 18px 60px rgba(15,23,42,0.8);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 20% 0, #a855f7, #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(88, 80, 236, 0.85);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .brand-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .nav-center {
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.9rem;
+    }
+
+    .nav-link {
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      color: var(--text-muted);
+      transition: background var(--transition-fast), color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .nav-link:hover {
+      background: rgba(148, 163, 184, 0.14);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .nav-link.active {
+      background: rgba(99,102,241,0.15);
+      color: var(--accent);
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn-outline {
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      font-size: 0.8rem;
+      color: var(--text);
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: border var(--transition-fast), background var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      background: rgba(15,23,42,0.9);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+      color: #f9fafb;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      box-shadow: 0 18px 40px rgba(129, 140, 248, 0.7);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+        filter var(--transition-fast);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 22px 55px rgba(129, 140, 248, 0.85);
+      filter: brightness(1.05);
+    }
+
+    .btn-icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    /* Hero Section */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.1fr);
+      gap: 2.5rem;
+      align-items: center;
+      margin-top: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .eyebrow {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.22);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.3rem, 3vw + 1rem, 3.1rem);
+      letter-spacing: -0.04em;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero h1 span.gradient {
+      background: linear-gradient(120deg, #a855f7, #6366f1, #22c55e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 32rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .hero-metrics {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.6rem;
+      flex-wrap: wrap;
+    }
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .metric-value {
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .tag-pill {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15,23,42,0.85);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .tag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    /* Search Card */
+    .search-card {
+      background: radial-gradient(circle at top, rgba(79,70,229,0.45), rgba(15,23,42,0.96));
+      border-radius: var(--radius-xl);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(129, 140, 248, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .search-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(
+        from 220deg,
+        rgba(56, 189, 248, 0.04),
+        rgba(132, 204, 22, 0.12),
+        rgba(129, 140, 248, 0.2),
+        transparent 65%
+      );
+      opacity: 0.55;
+      filter: blur(25px);
+      z-index: -1;
+    }
+
+    .search-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1.1fr 1.1fr auto;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .field-label {
+      font-size: 0.75rem;
+      color: rgba(226, 232, 240, 0.8);
+      margin-bottom: 0.2rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input,
+    .select {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15,23,42,0.88);
+      color: var(--text);
+      font-size: 0.82rem;
+      outline: none;
+      transition: border var(--transition-fast), box-shadow var(--transition-fast),
+        background var(--transition-fast), transform var(--transition-fast);
+      appearance: none;
+    }
+
+    .input::placeholder {
+      color: rgba(148, 163, 184, 0.8);
+    }
+
+    .input:focus,
+    .select:focus {
+      border-color: #a5b4fc;
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.6);
+      background: #020617;
+      transform: translateY(-1px);
+    }
+
+    .btn-search {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border-radius: 999px;
+      background: linear-gradient(120deg, #22c55e, #4ade80);
+      color: #022c22;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      box-shadow: 0 18px 40px rgba(34, 197, 94, 0.65);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+        filter var(--transition-fast);
+    }
+
+    .btn-search:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 22px 50px rgba(34, 197, 94, 0.8);
+      filter: brightness(1.05);
+    }
+
+    .search-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: rgba(226, 232, 240, 0.8);
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.1rem;
+    }
+
+    .search-meta span strong {
+      color: #e5e7eb;
+    }
+
+    .search-hot {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.78rem;
+    }
+
+    .hot-pill {
+      padding: 0.1rem 0.5rem;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 0.75rem;
+    }
+
+    /* Layout below hero */
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 2.1fr);
+      gap: 1.75rem;
+      align-items: flex-start;
+    }
+
+    /* Filters panel */
+    .filters-card {
+      background: var(--card);
+      border-radius: var(--radius-xl);
+      padding: 1.2rem 1.05rem 1.3rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-subtle);
+      position: sticky;
+      top: 80px;
+    }
+
+    .filters-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .filters-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .filters-reset {
+      font-size: 0.72rem;
+      color: var(--accent);
+      background: none;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    .filters-group {
+      margin-bottom: 0.8rem;
+    }
+
+    .filters-group:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .filters-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .chip {
+      font-size: 0.76rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: rgba(15,23,42,0.85);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: background var(--transition-fast), border var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.9);
+    }
+
+    .chip.active {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.18);
+      transform: translateY(-1px);
+    }
+
+    .chip.active .chip-dot {
+      background: var(--accent);
+    }
+
+    .filters-checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .checkbox-item input {
+      accent-color: var(--accent);
+    }
+
+    .salary-range {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .salary-range input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    .salary-value {
+      min-width: 3.5rem;
+      text-align: right;
+    }
+
+    /* Jobs area */
+    .jobs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.7rem;
+      gap: 0.75rem;
+    }
+
+    .jobs-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .jobs-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .jobs-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .jobs-sort {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .jobs-sort select {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15,23,42,0.95);
+      color: var(--text);
+      font-size: 0.78rem;
+      padding: 0.2rem 0.6rem;
+    }
+
+    .jobs-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.9rem;
+    }
+
+    .job-card {
+      background: rgba(15,23,42,0.96);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(31,41,55,0.95);
+      padding: 0.9rem 0.9rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.85);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border var(--transition-fast), transform var(--transition-fast),
+        box-shadow var(--transition-fast), background var(--transition-fast);
+    }
+
+    .job-card::before {
+      content: "";
+      position: absolute;
+      inset: -15%;
+      opacity: 0;
+      background: radial-gradient(circle at top, rgba(129, 140, 248, 0.3), transparent 60%);
+      transition: opacity var(--transition-fast);
+      pointer-events: none;
+    }
+
+    .job-card:hover {
+      border-color: rgba(129, 140, 248, 0.8);
+      transform: translateY(-3px);
+      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.95);
+      background: radial-gradient(circle at 0 -40%, rgba(79, 70, 229, 0.35), transparent 50%),
+        rgba(15,23,42,0.98);
+    }
+
+    .job-card:hover::before {
+      opacity: 1;
+    }
+
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .job-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .job-badge {
+      font-size: 0.68rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.08);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .job-company {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .job-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .job-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.18rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: rgba(17, 24, 39, 0.92);
+    }
+
+    .job-pill .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(156, 163, 175, 0.9);
+    }
+
+    .job-pill.location .dot {
+      background: #38bdf8;
+    }
+
+    .job-pill.type .dot {
+      background: #a855f7;
+    }
+
+    .job-pill.level .dot {
+      background: #f97316;
+    }
+
+    .job-pill.salary .dot {
+      background: #22c55e;
+    }
+
+    .job-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+    }
+
+    .job-tag {
+      padding: 0.18rem 0.45rem;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.96);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      color: rgba(209, 213, 219, 0.9);
+    }
+
+    .job-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.2rem;
+      gap: 0.4rem;
+    }
+
+    .job-time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .job-actions {
+      display: flex;
+      gap: 0.45rem;
+    }
+
+    .btn-ghost {
+      padding: 0.25rem 0.6rem;
+      font-size: 0.72rem;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      cursor: pointer;
+      transition: background var(--transition-fast), border var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(15,23,42,0.95);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .btn-apply {
+      padding: 0.27rem 0.8rem;
+      font-size: 0.72rem;
+      border-radius: 999px;
+      background: linear-gradient(120deg, #6366f1, #a855f7);
+      color: #f9fafb;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.8);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+        filter var(--transition-fast);
+    }
+
+    .btn-apply:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 35px rgba(79, 70, 229, 0.95);
+      filter: brightness(1.03);
+    }
+
+    .jobs-empty {
+      padding: 1.2rem;
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+      background: rgba(15,23,42,0.92);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    .jobs-empty strong {
+      color: #e5e7eb;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 2.5rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid rgba(31, 41, 55, 0.95);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .footer a {
+      color: var(--text-muted);
+    }
+
+    .footer a:hover {
+      color: var(--accent);
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal {
+      max-width: 540px;
+      width: 100%;
+      margin: 1.25rem;
+      background: radial-gradient(circle at top, rgba(79, 70, 229, 0.35), #020617);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.95);
+      padding: 1.35rem 1.2rem 1.2rem;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 0.7rem;
+      right: 0.8rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      background: none;
+    }
+
+    .modal-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .modal-company {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .modal-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      margin-bottom: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .modal-section-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.17em;
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .modal-body {
+      font-size: 0.83rem;
+      color: rgba(209, 213, 219, 0.93);
+      margin-bottom: 0.7rem;
+    }
+
+    .modal-body ul {
+      margin-left: 1.1rem;
+      margin-top: 0.35rem;
+    }
+
+    .modal-body li {
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.55rem;
+      margin-top: 0.2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .content {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .filters-card {
+        position: static;
+        order: 2;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .navbar {
+        flex-wrap: wrap;
+        gap: 0.7rem;
+      }
+
+      .nav-center {
+        display: none;
+      }
+
+      .hero {
+        margin-top: 1.1rem;
+      }
+
+      .search-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .btn-search {
+        padding-block: 0.75rem;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .jobs-list {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .filters-card {
+        padding-inline: 0.9rem;
+      }
+
+      .page {
+        padding-inline: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+    <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script><script id="zsiqscript" src="https://salesiq.zohopublic.in/widget?wc=siqb0c67c7581c5fa3d7e26c1b54d440e52a1e67f65831e26bb32cd51f1bbce7736" defer></script>
+  <div class="page">
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="nav-left">
+        <div class="logo-badge">JF</div>
+        <div>
+          <div class="brand-title">JobFinder</div>
+          <div class="brand-sub">Smart job matching for modern talent</div>
+        </div>
+      </div>
+      <nav class="nav-center">
+        <a href="#top" class="nav-link active">Home</a>
+        <a href="#jobs" class="nav-link">Jobs</a>
+        <a href="#companies" class="nav-link">Companies</a>
+        <a href="#about" class="nav-link">About</a>
+      </nav>
+      <div class="nav-right">
+        <button class="btn-outline" type="button">
+          <span>Post a job</span> <span class="btn-icon">＋</span>
+        </button>
+        <button class="btn-primary" type="button">
+          <span class="btn-icon">⚡</span>
+          <span>Sign in</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- HERO + SEARCH -->
+    <section class="hero" id="top">
+      <div>
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          <span>Find your next role faster</span>
+        </div>
+        <h1>
+          Discover
+          <span class="gradient">personalized job matches</span>
+          in tech, design & more.
+        </h1>
+        <p class="hero-subtitle">
+          Stop scrolling endless listings. Search across curated openings, filter by what
+          actually matters, and apply in just a few clicks.
+        </p>
+        <div class="hero-metrics">
+          <div class="metric-item">
+            <span class="metric-value">1,247+</span>
+            <span class="metric-label">Active roles today</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-value">280+</span>
+            <span class="metric-label">Hiring companies</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-value">4.8★</span>
+            <span class="metric-label">Talent satisfaction</span>
+          </div>
+        </div>
+        <div class="hero-tags">
+          <span class="tag-pill">
+            <span class="tag-dot"></span>
+            <span>AI-powered matching</span>
+          </span>
+          <span class="tag-pill">
+            <span class="tag-dot"></span>
+            <span>Verified companies only</span>
+          </span>
+          <span class="tag-pill">
+            <span class="tag-dot"></span>
+            <span>Remote-first roles</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- SEARCH CARD -->
+      <div class="search-card">
+        <form id="searchForm">
+          <div class="search-grid">
+            <div class="field">
+              <label class="field-label" for="keywordInput">Job title or keywords</label>
+              <input
+                id="keywordInput"
+                class="input"
+                type="text"
+                placeholder="e.g., Backend Engineer, UI/UX, Data Scientist"
+              />
+            </div>
+            <div class="field">
+              <label class="field-label" for="locationInput">Location</label>
+              <input
+                id="locationInput"
+                class="input"
+                type="text"
+                placeholder="Remote, Bengaluru, Berlin..."
+              />
+            </div>
+            <div class="field">
+              <label class="field-label" for="categorySelect">Category</label>
+              <select id="categorySelect" class="select">
+                <option value="">Any category</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Design">Design</option>
+                <option value="Product">Product</option>
+                <option value="Data">Data</option>
+                <option value="Marketing">Marketing</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label">&nbsp;</label>
+              <button class="btn-search" type="submit">
+                <span>Search Jobs</span>
+                <span>▸</span>
+              </button>
+            </div>
+          </div>
+          <div class="search-meta">
+            <span>Showing <strong id="resultsCount">0</strong> matches</span>
+            <div class="search-hot">
+              <span>Trending searches:</span>
+              <button type="button" class="hot-pill hot-search" data-keyword="Internship">
+                Internship
+              </button>
+              <button type="button" class="hot-pill hot-search" data-keyword="Remote">
+                Remote Developer
+              </button>
+              <button type="button" class="hot-pill hot-search" data-keyword="Data Scientist">
+                Data Scientist
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- CONTENT: FILTERS + JOBS -->
+    <section class="content">
+      <!-- Filters -->
+      <aside class="filters-card">
+        <div class="filters-header">
+          <span class="filters-title">Filters</span>
+          <button type="button" class="filters-reset" id="resetFilters">Reset</button>
+        </div>
+
+        <div class="filters-group">
+          <div class="filters-label">Job Type</div>
+          <div class="chips" id="jobTypeChips">
+            <button type="button" class="chip" data-value="">
+              <span class="chip-dot"></span>Any
+            </button>
+            <button type="button" class="chip" data-value="Full-time">
+              <span class="chip-dot"></span>Full-time
+            </button>
+            <button type="button" class="chip" data-value="Part-time">
+              <span class="chip-dot"></span>Part-time
+            </button>
+            <button type="button" class="chip" data-value="Internship">
+              <span class="chip-dot"></span>Internship
+            </button>
+            <button type="button" class="chip" data-value="Contract">
+              <span class="chip-dot"></span>Contract
+            </button>
+          </div>
+        </div>
+
+        <div class="filters-group">
+          <div class="filters-label">Experience Level</div>
+          <div class="filters-checkbox-group" id="experienceCheckboxes">
+            <label class="checkbox-item">
+              <input type="checkbox" value="Junior" checked />
+              <span>Junior / Entry</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="Mid" checked />
+              <span>Mid-level</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="Senior" checked />
+              <span>Senior</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="filters-group">
+          <div class="filters-label">Minimum Salary (USD)</div>
+          <div class="salary-range">
+            <input
+              id="salaryRange"
+              type="range"
+              min="0"
+              max="200000"
+              step="10000"
+              value="0"
+            />
+            <span class="salary-value" id="salaryValue">$0+</span>
+          </div>
+        </div>
+
+        <div class="filters-group">
+          <div class="filters-label">Workplace</div>
+          <div class="filters-checkbox-group" id="workplaceCheckboxes">
+            <label class="checkbox-item">
+              <input type="checkbox" value="Remote" checked />
+              <span>Remote</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="Hybrid" checked />
+              <span>Hybrid</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="On-site" checked />
+              <span>On-site</span>
+            </label>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Jobs -->
+      <main>
+        <header class="jobs-header">
+          <div class="jobs-title-block">
+            <h2 class="jobs-title" id="jobs">Featured roles</h2>
+            <p class="jobs-subtitle">
+              Handpicked opportunities from fast-growing startups and global teams.
+            </p>
+          </div>
+          <div class="jobs-sort">
+            <span>Sort by:</span>
+            <select id="sortSelect">
+              <option value="recent">Most recent</option>
+              <option value="salary-high">Salary (high → low)</option>
+              <option value="salary-low">Salary (low → high)</option>
+            </select>
+          </div>
+        </header>
+
+        <section id="jobsList" class="jobs-list"></section>
+        <div id="jobsEmpty" class="jobs-empty" style="display: none;">
+          <strong>No roles match your filters yet.</strong>
+          <br />
+          Try removing a filter, lowering the minimum salary, or searching with broader
+          keywords.
+        </div>
+
+        <footer class="footer" id="about">
+          <span>© <span id="year"></span> JobFinder. Crafted for modern job seekers.</span>
+          <div class="footer-links">
+            <a href="#top">Back to top</a>
+            <a href="javascript:void(0)">Privacy</a>
+            <a href="javascript:void(0)">Terms</a>
+            <a href="javascript:void(0)">Support</a>
+          </div>
+        </footer>
+      </main>
+    </section>
+  </div>
+
+  <!-- Job details modal -->
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="Close job details">
+        ✕
+      </button>
+      <h3 class="modal-title" id="modalTitle"></h3>
+      <p class="modal-company" id="modalCompany"></p>
+      <div class="modal-meta" id="modalMeta"></div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">About the role</div>
+        <div class="modal-body" id="modalAbout"></div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Requirements</div>
+        <div class="modal-body" id="modalRequirements"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-ghost" type="button" id="modalSaveBtn">
+          <span>♡</span><span>Save</span>
+        </button>
+        <button class="btn-apply" type="button" id="modalApplyBtn">
+          <span>Apply now</span> <span>↗</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Mock jobs data =====
+    const jobs = [
+      {
+        id: 1,
+        title: "Backend Engineer",
+        company: "NovaStack Labs",
+        location: "Remote • Bengaluru, India",
+        type: "Full-time",
+        level: "Mid",
+        salaryMin: 60000,
+        salaryMax: 90000,
+        workplace: "Remote",
+        category: "Engineering",
+        tags: ["Node.js", "PostgreSQL", "Microservices", "AWS"],
+        postedDaysAgo: 1,
+        isHot: true,
+        about:
+          "NovaStack is building the next-gen developer tools for distributed teams. As a Backend Engineer, you will architect and ship APIs used by thousands of engineers every day.",
+        requirements: [
+          "3+ years of experience with Node.js or similar backend stack",
+          "Strong understanding of relational databases (PostgreSQL preferred)",
+          "Experience with building and consuming RESTful or GraphQL APIs",
+          "Comfortable working in an async, remote-first environment",
+        ],
+      },
+      {
+        id: 2,
+        title: "Product Designer",
+        company: "Orbital Studio",
+        location: "Berlin, Germany",
+        type: "Full-time",
+        level: "Senior",
+        salaryMin: 80000,
+        salaryMax: 120000,
+        workplace: "Hybrid",
+        category: "Design",
+        tags: ["Figma", "Design Systems", "User Research"],
+        postedDaysAgo: 3,
+        isHot: false,
+        about:
+          "Help craft intuitive, delightful experiences for an AI-first customer platform. You'll collaborate closely with PM and Engineering to turn complex workflows into clean interfaces.",
+        requirements: [
+          "5+ years designing digital products for web or mobile",
+          "A portfolio that shows strong UX thinking and visual craft",
+          "Experience running user interviews and usability tests",
+          "Ability to communicate clearly with cross-functional partners",
+        ],
+      },
+      {
+        id: 3,
+        title: "Data Scientist",
+        company: "Helix Analytics",
+        location: "Remote",
+        type: "Full-time",
+        level: "Senior",
+        salaryMin: 110000,
+        salaryMax: 150000,
+        workplace: "Remote",
+        category: "Data",
+        tags: ["Python", "Machine Learning", "SQL", "Experimentation"],
+        postedDaysAgo: 2,
+        isHot: true,
+        about:
+          "Join a small but mighty data team to build models that power recommendations for millions of users globally. You’ll own projects from exploration through production.",
+        requirements: [
+          "4+ years of experience in data science / ML",
+          "Proficiency in Python, SQL, and common ML libraries",
+          "Experience with A/B testing and causal inference is a plus",
+          "Comfortable communicating insights to non-technical partners",
+        ],
+      },
+      {
+        id: 4,
+        title: "Frontend Intern",
+        company: "PixelCraft",
+        location: "On-site • Bengaluru, India",
+        type: "Internship",
+        level: "Junior",
+        salaryMin: 10000,
+        salaryMax: 20000,
+        workplace: "On-site",
+        category: "Engineering",
+        tags: ["React", "CSS", "JavaScript"],
+        postedDaysAgo: 5,
+        isHot: false,
+        about:
+          "Perfect for students or fresh grads. You'll work with senior engineers to build UI components and fix bugs in a large React codebase.",
+        requirements: [
+          "Basic understanding of HTML, CSS, and JavaScript",
+          "Familiarity with React or another JS framework",
+          "Ability to learn quickly and ask great questions",
+          "Available for a 3–6 month internship",
+        ],
+      },
+      {
+        id: 5,
+        title: "Growth Marketing Manager",
+        company: "Luma Health",
+        location: "San Francisco, USA",
+        type: "Full-time",
+        level: "Mid",
+        salaryMin: 90000,
+        salaryMax: 130000,
+        workplace: "Hybrid",
+        category: "Marketing",
+        tags: ["Performance Marketing", "SEO", "Analytics"],
+        postedDaysAgo: 7,
+        isHot: false,
+        about:
+          "Lead acquisition campaigns for a digital health product. You'll own budgets, channels, and reporting with support from design and analytics.",
+        requirements: [
+          "3+ years in growth or performance marketing roles",
+          "Hands-on experience with at least two major ad platforms",
+          "Strong analytical mindset and comfort with experimentation",
+          "Experience in healthtech is a plus, not required",
+        ],
+      },
+      {
+        id: 6,
+        title: "Product Manager",
+        company: "CloudBridge",
+        location: "Remote • London, UK",
+        type: "Full-time",
+        level: "Senior",
+        salaryMin: 100000,
+        salaryMax: 140000,
+        workplace: "Remote",
+        category: "Product",
+        tags: ["Roadmapping", "B2B SaaS", "Stakeholder Management"],
+        postedDaysAgo: 4,
+        isHot: true,
+        about:
+          "Own the roadmap for a core infrastructure product used by hundreds of enterprise customers. You'll work closely with Sales and Engineering to prioritize impactful work.",
+        requirements: [
+          "5+ years as a PM in B2B SaaS",
+          "Experience with developer / infra products is ideal",
+          "Excellent written and verbal communication skills",
+          "Strong prioritization skills and product intuition",
+        ],
+      },
+    ];
+
+    // ===== DOM elements =====
+    const jobsListEl = document.getElementById("jobsList");
+    const jobsEmptyEl = document.getElementById("jobsEmpty");
+    const resultsCountEl = document.getElementById("resultsCount");
+    const yearEl = document.getElementById("year");
+
+    const keywordInput = document.getElementById("keywordInput");
+    const locationInput = document.getElementById("locationInput");
+    const categorySelect = document.getElementById("categorySelect");
+    const jobTypeChips = document.getElementById("jobTypeChips");
+    const experienceCheckboxes = document.getElementById("experienceCheckboxes");
+    const workplaceCheckboxes = document.getElementById("workplaceCheckboxes");
+    const salaryRange = document.getElementById("salaryRange");
+    const salaryValue = document.getElementById("salaryValue");
+    const sortSelect = document.getElementById("sortSelect");
+    const searchForm = document.getElementById("searchForm");
+    const resetFiltersBtn = document.getElementById("resetFilters");
+
+    const hotSearchButtons = document.querySelectorAll(".hot-search");
+
+    // Modal elements
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const modalClose = document.getElementById("modalClose");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalCompany = document.getElementById("modalCompany");
+    const modalMeta = document.getElementById("modalMeta");
+    const modalAbout = document.getElementById("modalAbout");
+    const modalRequirements = document.getElementById("modalRequirements");
+    const modalApplyBtn = document.getElementById("modalApplyBtn");
+    const modalSaveBtn = document.getElementById("modalSaveBtn");
+
+    // State
+    const state = {
+      keyword: "",
+      location: "",
+      category: "",
+      jobType: "",
+      experienceLevels: ["Junior", "Mid", "Senior"],
+      workplaces: ["Remote", "Hybrid", "On-site"],
+      minSalary: 0,
+      sortBy: "recent",
+      savedJobs: new Set(),
+    };
+
+    // ===== Render Jobs =====
+    function renderJobs() {
+      const filtered = filterJobs();
+      const sorted = sortJobs(filtered);
+
+      jobsListEl.innerHTML = "";
+      resultsCountEl.textContent = sorted.length.toString();
+
+      if (!sorted.length) {
+        jobsEmptyEl.style.display = "block";
+        return;
+      }
+      jobsEmptyEl.style.display = "none";
+
+      sorted.forEach((job) => {
+        const card = document.createElement("article");
+        card.className = "job-card";
+        card.setAttribute("data-id", job.id);
+
+        const salaryLabel =
+          job.salaryMin && job.salaryMax
+            ? `$${job.salaryMin.toLocaleString()}–${job.salaryMax.toLocaleString()}`
+            : "Salary not specified";
+
+        const hotBadge = job.isHot ? '<span class="job-badge">Hot</span>' : "";
+
+        card.innerHTML = `
+          <div class="job-header">
+            <h3 class="job-title">${job.title}</h3>
+            ${hotBadge}
+          </div>
+          <div class="job-company">
+            <span>${job.company}</span>
+          </div>
+          <div class="job-meta">
+            <span class="job-pill location">
+              <span class="dot"></span>
+              <span>${job.location}</span>
+            </span>
+            <span class="job-pill type">
+              <span class="dot"></span>
+              <span>${job.type}</span>
+            </span>
+            <span class="job-pill level">
+              <span class="dot"></span>
+              <span>${job.level}</span>
+            </span>
+            <span class="job-pill salary">
+              <span class="dot"></span>
+              <span>${salaryLabel}</span>
+            </span>
+          </div>
+          <div class="job-tags">
+            ${job.tags
+              .map((tag) => `<span class="job-tag">${tag}</span>`)
+              .join("")}
+          </div>
+          <div class="job-footer">
+            <div class="job-time">
+              <span>⏱</span>
+              <span>Posted ${job.postedDaysAgo === 0 ? "today" : job.postedDaysAgo + "d ago"}</span>
+            </div>
+            <div class="job-actions">
+              <button
+                type="button"
+                class="btn-ghost btn-save"
+                data-id="${job.id}"
+              >
+                <span>${state.savedJobs.has(job.id) ? "♥" : "♡"}</span>
+                <span>${state.savedJobs.has(job.id) ? "Saved" : "Save"}</span>
+              </button>
+              <button
+                type="button"
+                class="btn-apply btn-apply-card"
+                data-id="${job.id}"
+              >
+                <span>Apply</span>
+                <span>↗</span>
+              </button>
+            </div>
+          </div>
+        `;
+
+        // Click: open modal when clicking card (except buttons)
+        card.addEventListener("click", (event) => {
+          if (
+            event.target.closest(".btn-ghost") ||
+            event.target.closest(".btn-apply-card")
+          ) {
+            return;
+          }
+          openJobModal(job);
+        });
+
+        const saveBtn = card.querySelector(".btn-save");
+        saveBtn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          toggleSave(job.id, saveBtn);
+        });
+
+        const applyBtn = card.querySelector(".btn-apply-card");
+        applyBtn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          openJobModal(job);
+        });
+
+        jobsListEl.appendChild(card);
+      });
+    }
+
+    // ===== Filtering & Sorting =====
+    function filterJobs() {
+      const keyword = state.keyword.toLowerCase();
+      const location = state.location.toLowerCase();
+      const experienceSet = new Set(state.experienceLevels);
+      const workplaceSet = new Set(state.workplaces);
+
+      return jobs.filter((job) => {
+        // Keyword in title, company, tags or category
+        const haystack = [
+          job.title,
+          job.company,
+          job.location,
+          job.category,
+          ...(job.tags || []),
+        ]
+          .join(" ")
+          .toLowerCase();
+        if (keyword && !haystack.includes(keyword)) return false;
+
+        // Location
+        if (location && !job.location.toLowerCase().includes(location)) return false;
+
+        // Category
+        if (state.category && job.category !== state.category) return false;
+
+        // Type
+        if (state.jobType && job.type !== state.jobType) return false;
+
+        // Experience
+        if (!experienceSet.has(job.level)) return false;
+
+        // Workplace
+        if (!workplaceSet.has(job.workplace)) return false;
+
+        // Min salary
+        if (state.minSalary && job.salaryMax < state.minSalary) return false;
+
+        return true;
+      });
+    }
+
+    function sortJobs(list) {
+      const arr = [...list];
+      switch (state.sortBy) {
+        case "salary-high":
+          arr.sort((a, b) => b.salaryMax - a.salaryMax);
+          break;
+        case "salary-low":
+          arr.sort((a, b) => a.salaryMin - b.salaryMin);
+          break;
+        case "recent":
+        default:
+          arr.sort((a, b) => a.postedDaysAgo - b.postedDaysAgo);
+          break;
+      }
+      return arr;
+    }
+
+    // ===== UI Handlers =====
+    function updateSalaryLabel() {
+      const value = Number(salaryRange.value);
+      if (!value) {
+        salaryValue.textContent = "$0+";
+      } else {
+        salaryValue.textContent = "$" + value.toLocaleString() + "+";
+      }
+    }
+
+    // Set default active chip for "Any"
+    function initJobTypeChips() {
+      const chips = jobTypeChips.querySelectorAll(".chip");
+      chips.forEach((chip) => {
+        chip.addEventListener("click", () => {
+          chips.forEach((c) => c.classList.remove("active"));
+          chip.classList.add("active");
+          state.jobType = chip.dataset.value;
+          renderJobs();
+        });
+      });
+
+      // Set default
+      const anyChip = jobTypeChips.querySelector('.chip[data-value=""]');
+      if (anyChip) anyChip.classList.add("active");
+    }
+
+    function initCheckboxGroup(container, stateKey) {
+      const update = () => {
+        const values = Array.from(
+          container.querySelectorAll('input[type="checkbox"]:checked')
+        ).map((el) => el.value);
+        state[stateKey] = values.length ? values : [];
+        renderJobs();
+      };
+
+      container.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+        input.addEventListener("change", update);
+      });
+
+      update();
+    }
+
+    function toggleSave(id, buttonEl) {
+      if (state.savedJobs.has(id)) {
+        state.savedJobs.delete(id);
+      } else {
+        state.savedJobs.add(id);
+      }
+      if (buttonEl) {
+        const saved = state.savedJobs.has(id);
+        buttonEl.innerHTML = `
+          <span>${saved ? "♥" : "♡"}</span>
+          <span>${saved ? "Saved" : "Save"}</span>
+        `;
+      }
+    }
+
+    // ===== Modal =====
+    function openJobModal(job) {
+      modalTitle.textContent = job.title;
+      modalCompany.textContent = `${job.company} • ${job.location}`;
+      modalMeta.innerHTML = `
+        <span>${job.type}</span>
+        <span>•</span>
+        <span>${job.level}</span>
+        <span>•</span>
+        <span>${job.workplace}</span>
+        <span>•</span>
+        <span>Est. $${job.salaryMin.toLocaleString()}–${job.salaryMax.toLocaleString()} USD</span>
+      `;
+
+      modalAbout.innerHTML = `<p>${job.about}</p>`;
+      modalRequirements.innerHTML = `
+        <ul>
+          ${job.requirements.map((item) => `<li>${item}</li>`).join("")}
+        </ul>
+      `;
+
+      // Update buttons
+      modalApplyBtn.onclick = () => {
+        alert("This is a demo. Here you would redirect to an application form for " + job.title + ".");
+      };
+      modalSaveBtn.onclick = () => {
+        toggleSave(job.id);
+        // Also update main job cards
+        renderJobs();
+        const saved = state.savedJobs.has(job.id);
+        modalSaveBtn.innerHTML = `
+          <span>${saved ? "♥" : "♡"}</span>
+          <span>${saved ? "Saved" : "Save"}</span>
+        `;
+      };
+
+      const saved = state.savedJobs.has(job.id);
+      modalSaveBtn.innerHTML = `
+        <span>${saved ? "♥" : "♡"}</span>
+        <span>${saved ? "Saved" : "Save"}</span>
+      `;
+
+      modalBackdrop.classList.add("active");
+      modalBackdrop.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+      modalBackdrop.classList.remove("active");
+      modalBackdrop.setAttribute("aria-hidden", "true");
+    }
+
+    // ===== Init =====
+    function init() {
+      yearEl.textContent = new Date().getFullYear().toString();
+
+      initJobTypeChips();
+      initCheckboxGroup(experienceCheckboxes, "experienceLevels");
+      initCheckboxGroup(workplaceCheckboxes, "workplaces");
+
+      updateSalaryLabel();
+
+      // Listeners
+      salaryRange.addEventListener("input", () => {
+        state.minSalary = Number(salaryRange.value);
+        updateSalaryLabel();
+        renderJobs();
+      });
+
+      sortSelect.addEventListener("change", () => {
+        state.sortBy = sortSelect.value;
+        renderJobs();
+      });
+
+      searchForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        state.keyword = keywordInput.value.trim();
+        state.location = locationInput.value.trim();
+        state.category = categorySelect.value;
+        renderJobs();
+      });
+
+      resetFiltersBtn.addEventListener("click", () => {
+        keywordInput.value = "";
+        locationInput.value = "";
+        categorySelect.value = "";
+
+        state.keyword = "";
+        state.location = "";
+        state.category = "";
+        state.minSalary = 0;
+        state.sortBy = "recent";
+
+        salaryRange.value = "0";
+        updateSalaryLabel();
+        sortSelect.value = "recent";
+
+        // reset chips
+        jobTypeChips.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
+        const anyChip = jobTypeChips.querySelector('.chip[data-value=""]');
+        if (anyChip) anyChip.classList.add("active");
+        state.jobType = "";
+
+        // reset checkboxes
+        experienceCheckboxes
+          .querySelectorAll('input[type="checkbox"]')
+          .forEach((input) => (input.checked = true));
+        workplaceCheckboxes
+          .querySelectorAll('input[type="checkbox"]')
+          .forEach((input) => (input.checked = true));
+
+        state.experienceLevels = ["Junior", "Mid", "Senior"];
+        state.workplaces = ["Remote", "Hybrid", "On-site"];
+
+        renderJobs();
+      });
+
+      // Hot searches
+      hotSearchButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          keywordInput.value = btn.dataset.keyword || "";
+          state.keyword = keywordInput.value.trim();
+          renderJobs();
+        });
+      });
+
+      // Modal events
+      modalClose.addEventListener("click", closeModal);
+      modalBackdrop.addEventListener("click", (event) => {
+        if (event.target === modalBackdrop) {
+          closeModal();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeModal();
+        }
+      });
+
+      // First render
+      renderJobs();
+    }
+
+    init();
+  </script>
+</body>
+</html>
